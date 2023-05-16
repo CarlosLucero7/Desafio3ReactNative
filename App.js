@@ -5,6 +5,7 @@ import StartGame from './src/screens/startGame';
 import GameScreen from './src/screens/gameScreen';
 import { useState } from 'react';
 import { useFonts } from 'expo-font';
+import ResultScreeen from './src/screens/resaultScreen';
 
 export default function App() {
 
@@ -13,18 +14,33 @@ export default function App() {
   })
 
   const [userNumber, setUserNumber] = useState();
-
+  const [winOrLose, setWinOrLose] = useState(false);
+  const [result,setResult] = useState("");
+  
   const handleStartGame = selectedNumber => {
     setUserNumber(selectedNumber)
-  }
+  };
+
+  const gameResult = (selection, number) =>{
+    if((selection==="lower" && userNumber < number) ||
+    (selection==="higher" && userNumber > number)) {
+      setResult('ganaste');
+    } else {
+      setResult('perdiste')
+    }
+    setWinOrLose(true);
+  };
+
   let content = <StartGame onStartGame={handleStartGame} />
 
-  if (userNumber) {
-    content = <GameScreen />
+  if (userNumber && winOrLose===true) {
+    content= <ResultScreeen result={result}/>
+  }else if(userNumber){
+    content = <GameScreen handleResult={gameResult} />
   }
   if(!loaded) {
     return null;
-  }
+  };
 
   return (
     <View style={styles.container}>
